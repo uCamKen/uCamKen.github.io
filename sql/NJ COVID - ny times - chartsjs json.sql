@@ -2,7 +2,7 @@ select top 5 * from nytdata
 
 
 DECLARE @NewLineChar AS CHAR(2) = CHAR(13) + CHAR(10)
-select 'var sqldata = {labels: [' + STUFF ((
+select 'var sqlCasesData = {labels: [' + STUFF ((
 	select ',''' + date + ''''
 	from (
 		select date 
