@@ -2,6 +2,7 @@
     <head>
         <title>A test</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>		
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-deferred@1"></script>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
 		<style>
 		canvas{
@@ -29,6 +30,7 @@
         };
 var sqlCasesData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07','2020-03-08','2020-03-09','2020-03-10','2020-03-11','2020-03-12','2020-03-13','2020-03-14','2020-03-15','2020-03-16','2020-03-17','2020-03-18','2020-03-19','2020-03-20','2020-03-21','2020-03-22','2020-03-23','2020-03-24','2020-03-25','2020-03-26','2020-03-27','2020-03-28','2020-03-29','2020-03-30','2020-03-31','2020-04-01','2020-04-02','2020-04-03','2020-04-04','2020-04-05','2020-04-06','2020-04-07','2020-04-08','2020-04-09','2020-04-10','2020-04-11','2020-04-12','2020-04-13','2020-04-14','2020-04-15','2020-04-16','2020-04-17','2020-04-18','2020-04-19','2020-04-20','2020-04-21','2020-04-22','2020-04-23','2020-04-24','2020-04-25','2020-04-26','2020-04-27','2020-04-28','2020-04-29','2020-04-30','2020-05-01','2020-05-02','2020-05-03','2020-05-04','2020-05-05','2020-05-06','2020-05-07','2020-05-08','2020-05-09','2020-05-10','2020-05-11','2020-05-12','2020-05-13','2020-05-14','2020-05-15','2020-05-16','2020-05-17','2020-05-18','2020-05-19'],
     totalcases: [1,2,4,4,6,11,15,23,29,50,75,98,176,268,427,735,896,1336,1914,2844,3675,4402,6876,8825,11124,13386,16636,18696,22255,25590,29895,34124,37505,41090,44416,47437,51027,54588,58151,61850,64584,68824,71030,75317,78467,81420,85301,88797,92387,95411,99989,102196,105523,109038,111188,113856,116264,118652,121190,123717,126744,128269,130593,131890,133635,135454,137085,138532,139945,140743,141560,142704,143905,145089,146334,148039,149037],
+    cases7days: [,,,,,,,10,11,15,29,33,102,155,280,612,771,1189,1711,2615,3377,3940,6135,7926,9785,11472,13792,15021,17853,18714,21070,23000,24119,24773,27183,28332,29307,28849,27038,26892,25812,24926,23766,24290,23879,23445,24140,24756,24666,24979,24672,23916,24294,23737,22391,21469,20853,19293,18994,18194,17746,17252,16905,15649,14983,14294,13487,11838,11676,10150,9670,9069,8451,8004,7802,8094,8294],
     cases14days: [,,,,,,,,,,,,,,132,295,353,373,568,1389,1763,2311,5994,8194,10509,12659,16130,18220,21602,24804,28974,32763,35591,38246,40741,43035,44633,47098,48581,50210,50585,52109,52098,53545,52658,50483,51032,50568,49592,48745,48962,47725,47739,47781,46989,46016,45806,43905,42859,42369,41443,39485,38255,36479,34202,33258,31562,29584,28846,26901,25296,24052,22715,21372,19590,19770,18444],
     casesToday: [,1,1,0,1,1,2,6,3,20,24,23,73,89,156,305,160,440,577,930,831,727,2474,1949,2299,2262,3250,2217,3559,3335,4366,5099,3495,3885,4627,3879,3956,3908,3563,3699,2805,4240,2719,4428,3479,2953,4044,3496,3651,3032,4578,2783,3327,3515,2150,2768,2509,2527,2538,2527,3062,1525,2421,1297,1787,1819,1631,1447,1413,823,859,1214,1201,1184,1292,1819,1031]
 };
@@ -39,7 +41,7 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
 };
 
         window.onload = function() {
-                document.getElementById("theHeader").innerText = "Charts";
+                document.getElementById("theHeader").innerText = "COVID-19 Charts";
 
                 var casesCtx = document.getElementById("casesChart");
                 var casesChart = new Chart(casesCtx, {
@@ -101,6 +103,13 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     }
                                 }
                             ]
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            }
                         }
                     }
                 });
@@ -166,6 +175,86 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     }
                                 }
                             ]
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            }
+                        }
+                    }
+                });
+
+                var xyData = [];
+                for(i = 0, j = 0; i < sqlCasesData.totalcases.length; i++) {
+                    if(isNaN(sqlCasesData.cases7days[i])) {
+                        j = sqlCasesData.totalcases[i];
+                    }
+                    else {
+                        j = sqlCasesData.cases7days[i];
+                    }
+                    xyData[i] = {x: sqlCasesData.totalcases[i], y: j};
+                }
+
+                var trajCtx = document.getElementById("trajectoryChart");
+                var trajChart = Chart.Scatter(trajCtx, {
+                    // The data for our dataset
+                    data: {
+                        datasets: [{
+                            label: 'Total Cases',
+                            backgroundColor: chartColors.red,
+                            borderColor: chartColors.ltred,
+                            fill: false,
+                            data: xyData,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        }]
+
+                    },
+                    // Configuration options go here
+                    options: {
+                        scales: {
+                            xAxes : [
+                                {
+                                    type: 'logarithmic',
+                                    display: true,
+                                    position: 'bottom',
+                                    ticks: {
+                                        min:0,
+                                        userCallback: function(tick) {
+                                            return Number(tick).toLocaleString();
+                                        }
+                                    }
+                                }
+                            ],
+                            yAxes : [
+                                {
+                                    type: 'logarithmic',
+                                    display: true,
+                                    position: 'left',
+                                    id: 'leftAxis',
+                                    scaleLabel:
+                                    {
+                                        display: true,
+                                        labelString: 'Total Cases / Active Cases (New Cases Past 14 Days)'
+                                    },
+                                    ticks: {
+                                        min:0,
+                                        userCallback: function(tick) {
+                                            return Number(tick).toLocaleString();
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            }
                         }
                     }
                 });
@@ -174,6 +263,10 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
     </head>
     <body>
         <h1 id="theHeader">This is broken</h1>
+        <div style="width:90%">
+            <h2>Trajectory</h2>
+            <canvas id="trajectoryChart"></canvas>
+        </div>
         <div style="width:90%">
             <h2>Cases/New Cases/Active Cases</h2>
             <canvas id="casesChart"></canvas>
