@@ -186,7 +186,7 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     }
                 });
 
-                var xyData = [];
+                var casesData = [];
                 for(i = 0, j = 0; i < sqlCasesData.totalcases.length; i++) {
                     if(isNaN(sqlCasesData.cases7days[i])) {
                         j = sqlCasesData.totalcases[i];
@@ -194,7 +194,17 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     else {
                         j = sqlCasesData.cases7days[i];
                     }
-                    xyData[i] = {x: sqlCasesData.totalcases[i], y: j};
+                    casesData[i] = {x: sqlCasesData.totalcases[i], y: j};
+                }
+                var deathsData = [];
+                for(i = 0, j = 0; i < sqlDeathsData.totaldeaths.length; i++) {
+                    if(isNaN(sqlDeathsData.deaths7days[i])) {
+                        j = sqlDeathsData.totaldeaths[i];
+                    }
+                    else {
+                        j = sqlDeathsData.deaths7days[i];
+                    }
+                    deathsData[i] = {x: sqlDeathsData.totaldeaths[i], y: j};
                 }
 
                 var trajCtx = document.getElementById("trajectoryChart");
@@ -202,11 +212,20 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     // The data for our dataset
                     data: {
                         datasets: [{
-                            label: 'Total Cases',
+                            label: "Cases",
+                            backgroundColor: chartColors.purple,
+                            borderColor: chartColors.ltpurple,
+                            fill: false,
+                            data: casesData,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        },{
+                            label: "Deaths",
                             backgroundColor: chartColors.red,
                             borderColor: chartColors.ltred,
                             fill: false,
-                            data: xyData,
+                            data: deathsData,
                             snapGaps: true,
                             showLine: true,
                             lineTension: 0,
@@ -221,6 +240,11 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     type: 'logarithmic',
                                     display: true,
                                     position: 'bottom',
+                                    scaleLabel:
+                                    {
+                                        display: true,
+                                        labelString: 'Total Cases - Logarithmic Scale'
+                                    },
                                     ticks: {
                                         min:0,
                                         userCallback: function(tick) {
@@ -238,7 +262,7 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     scaleLabel:
                                     {
                                         display: true,
-                                        labelString: 'Total Cases / Active Cases (New Cases Past 14 Days)'
+                                        labelString: 'New Cases (Past 7 Days) - Logarithmic Scale'
                                     },
                                     ticks: {
                                         min:0,
