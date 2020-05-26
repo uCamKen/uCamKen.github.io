@@ -39,6 +39,33 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
     deaths7days: [,,,,,,,1,1,1,1,1,3,2,4,8,10,14,17,23,48,63,79,104,131,141,179,223,293,453,535,700,766,799,961,1145,1167,1287,1345,1442,1450,1575,1654,1821,1908,1887,1854,1935,1950,1907,1851,1780,1795,1736,1668,1689,1709,1862,1921,1879,1933,1866,1802,1779,1573,1414,1374,1384,1400,1264,1153,1145,1187,1133,1101,1125,1078],
     deathsToday: [,0,0,0,0,0,1,0,0,0,1,0,1,0,2,4,2,5,4,7,24,18,20,26,32,14,59,68,88,180,108,200,70,88,237,272,204,236,251,167,93,362,351,362,322,231,134,175,377,310,305,252,246,75,106,398,329,458,310,204,129,40,334,305,252,151,165,140,55,198,194,244,192,111,107,79,151]
 };
+        with(sqlCasesData) {
+            sqlCasesData.timeToDouble = new Array();
+            for(var i = 0; i < totalcases.length; i++) {
+                casesToday[i] = (i==0)?totalcases[i]:totalcases[i]-totalcases[i-1];
+                cases7days[i] = 0;
+                for(var j = Math.max(0,i-6); j <= i; j++) {
+                    cases7days[i] += casesToday[j];
+                }
+                cases14days[i] = 0;
+                for(var j = Math.max(0,i-13); j <= i; j++) {
+                    cases14days[i] += casesToday[j];
+                }
+                timeToDouble[i] = 4.9*totalcases[i]/cases7days[i];
+            }
+        }
+
+        with(sqlDeathsData) {
+            sqlDeathsData.timeToDouble = new Array();
+            for(var i = 0; i < totaldeaths.length; i++) {
+                deathsToday[i] = (i==0)?totaldeaths[i]:totaldeaths[i]-totaldeaths[i-1];
+                deaths7days[i] = 0;
+                for(var j = Math.max(0,i-6); j <= i; j++) {
+                    deaths7days[i] += deathsToday[j];
+                }
+                timeToDouble[i] = 4.9*totaldeaths[i]/deaths7days[i];
+            }
+        }
 
         window.onload = function() {
                 document.getElementById("theHeader").innerText = "COVID-19 Charts";
@@ -186,6 +213,7 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     }
                 });
 
+                var maxTraj = 0;
                 var casesData = [];
                 for(i = 0, j = 0; i < sqlCasesData.totalcases.length; i++) {
                     if(isNaN(sqlCasesData.cases7days[i])) {
@@ -194,7 +222,8 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     else {
                         j = sqlCasesData.cases7days[i];
                     }
-                    casesData[i] = {x: sqlCasesData.totalcases[i], y: j};
+                    casesData[i] = {x: sqlCasesData.totalcases[i], y: j, label:"ok"};
+                    maxTraj = Math.max(j,maxTraj);
                 }
                 var deathsData = [];
                 for(i = 0, j = 0; i < sqlDeathsData.totaldeaths.length; i++) {
@@ -204,8 +233,14 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                     else {
                         j = sqlDeathsData.deaths7days[i];
                     }
-                    deathsData[i] = {x: sqlDeathsData.totaldeaths[i], y: j};
+                    deathsData[i] = {x: sqlDeathsData.totaldeaths[i], y: j, label:"ok"};
+                    maxTraj = Math.max(j,maxTraj);
                 }
+                var b = Math.pow(10,Math.floor(Math.log(maxTraj)/Math.log(10)));
+                maxTraj = Math.ceil(maxTraj/b)*b;
+                var maxTrajX = casesData[sqlCasesData.length - 1];
+                b = Math.pow(10,Math.floor(Math.log(maxTrajX)/Math.log(10)));
+                maxTrajX = Math.ceil(maxTrajX/b)*b;                
 
                 var trajCtx = document.getElementById("trajectoryChart");
                 var trajChart = Chart.Scatter(trajCtx, {
@@ -247,6 +282,7 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     },
                                     ticks: {
                                         min:0,
+                                        max:maxTrajX,
                                         userCallback: function(tick) {
                                             return Number(tick).toLocaleString();
                                         }
@@ -266,10 +302,69 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
                                     },
                                     ticks: {
                                         min:0,
+                                        max:maxTraj,
                                         userCallback: function(tick) {
                                             return Number(tick).toLocaleString();
                                         }
                                     }
+                                }
+                            ]
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            }
+                        }
+                    }
+                });
+
+                var dblCtx = document.getElementById("doubleChart");
+                var dblChart = Chart.Line(dblCtx, {
+                    // The data for our dataset
+                    data: {
+                        labels: sqlDeathsData.labels,
+                        datasets: [{
+                            label: "Time to Double Cases",
+                            backgroundColor: chartColors.purple,
+                            borderColor: chartColors.ltpurple,
+                            fill: false,
+                            data: sqlCasesData.timeToDouble,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        },{
+                            label: "Time to Double Deaths",
+                            backgroundColor: chartColors.orange,
+                            borderColor: chartColors.ltorange,
+                            fill: false,
+                            data: sqlDeathsData.timeToDouble,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        }]
+
+                    },
+                    // Configuration options go here
+                    options: {
+                        scales: {
+                            xAxes : [
+                                {
+                                    display: true,
+                                    position: 'bottom',
+                                }
+                            ],
+                            yAxes : [
+                                {
+                                    display: true,
+                                    position: 'left',
+                                    id: 'leftAxis',
+                                    scaleLabel:
+                                    {
+                                        display: true,
+                                        labelString: 'Number of Days to Double'
+                                    },
                                 }
                             ]
                         },
@@ -298,6 +393,10 @@ var sqlDeathsData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07
         <div style="width:90%">
             <h2>Deaths/Deaths Today/Deaths This Week</h2>
             <canvas id="deathsChart"></canvas>
+        </div>
+        <div style="width:90%">
+            <h2>Time to Double</h2>
+            <canvas id="doubleChart"></canvas>
         </div>
     </body>
 </html>
