@@ -12,6 +12,10 @@
 			-webkit-user-select: none;
 			-ms-user-select: none;
 		}
+        button:disabled {
+            color: lightgrey;
+            cursor: not-allowed;
+        }
 		</style>
         <script>
         window.chartColors = {
@@ -30,10 +34,16 @@
             ltpurple: 'rgba(153, 102, 255,0.6)',
             ltgrey: 'rgb(201, 203, 207)'
         };
-        var sqlData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07','2020-03-08','2020-03-09','2020-03-10','2020-03-11','2020-03-12','2020-03-13','2020-03-14','2020-03-15','2020-03-16','2020-03-17','2020-03-18','2020-03-19','2020-03-20','2020-03-21','2020-03-22','2020-03-23','2020-03-24','2020-03-25','2020-03-26','2020-03-27','2020-03-28','2020-03-29','2020-03-30','2020-03-31','2020-04-01','2020-04-02','2020-04-03','2020-04-04','2020-04-05','2020-04-06','2020-04-07','2020-04-08','2020-04-09','2020-04-10','2020-04-11','2020-04-12','2020-04-13','2020-04-14','2020-04-15','2020-04-16','2020-04-17','2020-04-18','2020-04-19','2020-04-20','2020-04-21','2020-04-22','2020-04-23','2020-04-24','2020-04-25','2020-04-26','2020-04-27','2020-04-28','2020-04-29','2020-04-30','2020-05-01','2020-05-02','2020-05-03','2020-05-04','2020-05-05','2020-05-06','2020-05-07','2020-05-08','2020-05-09','2020-05-10','2020-05-11','2020-05-12','2020-05-13','2020-05-14','2020-05-15','2020-05-16','2020-05-17','2020-05-18','2020-05-19'],
-    totalcases: [1,2,4,4,6,11,15,23,29,50,75,98,176,268,427,735,896,1336,1914,2844,3675,4402,6876,8825,11124,13386,16636,18696,22255,25590,29895,34124,37505,41090,44416,47437,51027,54588,58151,61850,64584,68824,71030,75317,78467,81420,85301,88797,92387,95411,99989,102196,105523,109038,111188,113856,116264,118652,121190,123717,126744,128269,130593,131890,133635,135454,137085,138532,139945,140743,141560,142704,143905,145089,146334,148039,149037],
-    totaldeaths: [0,0,0,0,0,0,1,1,1,1,2,2,3,3,5,9,11,16,20,27,51,69,89,115,147,161,206,274,362,539,647,847,917,1005,1233,1504,1706,1932,2183,2350,2443,2805,3156,3518,3840,4070,4202,4377,4753,5063,5368,5617,5863,5938,6044,6442,6770,7228,7538,7742,7871,7910,8244,8549,8801,8952,9116,9255,9310,9508,9702,9946,10138,10249,10356,10435,10586],
+        var sqlData = {labels: ['2020-03-05','2020-03-06','2020-03-07','2020-03-08','2020-03-09','2020-03-10','2020-03-11','2020-03-12','2020-03-13','2020-03-14','2020-03-15','2020-03-16','2020-03-17','2020-03-18','2020-03-19','2020-03-20','2020-03-21','2020-03-22','2020-03-23','2020-03-24','2020-03-25','2020-03-26','2020-03-27','2020-03-28','2020-03-29','2020-03-30','2020-03-31','2020-04-01','2020-04-02','2020-04-03','2020-04-04','2020-04-05','2020-04-06','2020-04-07','2020-04-08','2020-04-09','2020-04-10','2020-04-11','2020-04-12','2020-04-13','2020-04-14','2020-04-15','2020-04-16','2020-04-17','2020-04-18','2020-04-19','2020-04-20','2020-04-21','2020-04-22','2020-04-23','2020-04-24','2020-04-25','2020-04-26','2020-04-27','2020-04-28','2020-04-29','2020-04-30','2020-05-01','2020-05-02','2020-05-03','2020-05-04','2020-05-05','2020-05-06','2020-05-07','2020-05-08','2020-05-09','2020-05-10','2020-05-11','2020-05-12','2020-05-13','2020-05-14','2020-05-15','2020-05-16','2020-05-17','2020-05-18','2020-05-19','2020-05-20','2020-05-21','2020-05-22','2020-05-23','2020-05-24','2020-05-25','2020-05-26','2020-05-27'],
+    totalcases: [1,1,4,6,11,15,24,30,50,50,98,178,267,427,742,890,1327,1914,2844,3675,4402,6876,8825,11124,13386,16636,18696,22255,25590,29895,34124,37505,41090,44416,47437,51027,54588,58151,61850,64584,68824,71030,75317,78467,81420,85301,88806,92387,95865,99989,102196,105523,109038,111188,113856,116264,118652,121190,123717,126744,128269,130593,131890,133635,135454,137085,138532,139945,140743,141560,142704,143905,145089,146334,148039,149013,150399,151472,152719,153104,154154,155092,155764,156628],
+    totaltests: [1,1,4,37,46,59,81,104,147,147,218,298,430,617,952,1154,1621,2241,3203,12000,14854,20537,25372,30510,35602,41860,45773,52642,59110,67503,75356,82166,89032,94974,100416,107192,113523,120193,126735,129469,139774,144021,151830,157449,162536,170688,178057,184826,191659,200148,205962,213686,223144,227775,234359,241318,247918,256545,262312,275066,277220,287623,288920,292658,298759,305206,312447,425933,433060,441450,451696,462972,475224,487565,505569,520182,531343,544274,555314,578735,603807,623797,635892,660325],
+    totaldeaths: [,,,,,,1,1,1,1,2,2,3,5,9,11,16,20,27,44,62,81,108,140,161,198,267,355,537,646,846,917,1003,1232,1504,1700,1932,2183,2350,2443,2805,3156,3518,3840,4070,4202,4377,4753,5063,5368,5617,5863,5938,6044,6442,6770,7228,7538,7742,7871,7910,8244,8549,8801,8952,9116,9255,9310,9508,9702,9946,10138,10249,10356,10435,10586,10747,10843,10985,11081,11133,11144,11191,11339],
 };
+
+    //     var sqlData = {labels: ['2020-03-04','2020-03-05','2020-03-06','2020-03-07','2020-03-08','2020-03-09','2020-03-10','2020-03-11','2020-03-12','2020-03-13','2020-03-14','2020-03-15','2020-03-16','2020-03-17','2020-03-18','2020-03-19','2020-03-20','2020-03-21','2020-03-22','2020-03-23','2020-03-24','2020-03-25','2020-03-26','2020-03-27','2020-03-28','2020-03-29','2020-03-30','2020-03-31','2020-04-01','2020-04-02','2020-04-03','2020-04-04','2020-04-05','2020-04-06','2020-04-07','2020-04-08','2020-04-09','2020-04-10','2020-04-11','2020-04-12','2020-04-13','2020-04-14','2020-04-15','2020-04-16','2020-04-17','2020-04-18','2020-04-19','2020-04-20','2020-04-21','2020-04-22','2020-04-23','2020-04-24','2020-04-25','2020-04-26','2020-04-27','2020-04-28','2020-04-29','2020-04-30','2020-05-01','2020-05-02','2020-05-03','2020-05-04','2020-05-05','2020-05-06','2020-05-07','2020-05-08','2020-05-09','2020-05-10','2020-05-11','2020-05-12','2020-05-13','2020-05-14','2020-05-15','2020-05-16','2020-05-17','2020-05-18','2020-05-19'],
+    // totalcases: [1,2,4,4,6,11,15,23,29,50,75,98,176,268,427,735,896,1336,1914,2844,3675,4402,6876,8825,11124,13386,16636,18696,22255,25590,29895,34124,37505,41090,44416,47437,51027,54588,58151,61850,64584,68824,71030,75317,78467,81420,85301,88797,92387,95411,99989,102196,105523,109038,111188,113856,116264,118652,121190,123717,126744,128269,130593,131890,133635,135454,137085,138532,139945,140743,141560,142704,143905,145089,146334,148039,149037],
+    // totaldeaths: [0,0,0,0,0,0,1,1,1,1,2,2,3,3,5,9,11,16,20,27,51,69,89,115,147,161,206,274,362,539,647,847,917,1005,1233,1504,1706,1932,2183,2350,2443,2805,3156,3518,3840,4070,4202,4377,4753,5063,5368,5617,5863,5938,6044,6442,6770,7228,7538,7742,7871,7910,8244,8549,8801,8952,9116,9255,9310,9508,9702,9946,10138,10249,10356,10435,10586],
+// };
 
         with(sqlData) {
             sqlData.timeToDouble = new Array();
@@ -45,27 +55,42 @@
             sqlData.deaths7days = new Array();
             sqlData.deathsComp = new Array();
             sqlData.deathsCompAvg = new Array();
+            sqlData.testsToday = new Array();
+            sqlData.tests7days = new Array();
+            sqlData.tests14days = new Array();
+            sqlData.timeToDoubleTests = new Array();
             for(var i = 0; i < labels.length; i++) {
+                totalcases[i] = isNaN(totalcases[i])?0:totalcases[i];
+                totaltests[i] = isNaN(totaltests[i])?0:totaltests[i];
+                totaldeaths[i] = isNaN(totaldeaths[i])?0:totaldeaths[i];
                 casesToday[i] = (i==0)?totalcases[i]:totalcases[i]-totalcases[i-1];
                 deathsToday[i] = (i==0)?totaldeaths[i]:totaldeaths[i]-totaldeaths[i-1];
                 deathsComp[i] = deathsToday[i] - deathsToday[Math.max(0,i-7)];
+                testsToday[i] = (i==0)?totaltests[i]:totaltests[i]-totaltests[i-1];
                 cases7days[i] = 0;
                 deaths7days[i] = 0;
                 deathsCompAvg[i] = 0;
+                tests7days[i] = 0;
                 for(var j = Math.max(0,i-6); j <= i; j++) {
                     cases7days[i] += casesToday[j];
                     deaths7days[i] += deathsToday[j];
                     deathsCompAvg[i] += deathsComp[j];
+                    tests7days[i] += testsToday[j];
                 }
                 deathsCompAvg[i] = Math.round(10 * deathsCompAvg[i] / (Math.min(7,i+1))) / 10;
                 cases14days[i] = 0;
+                tests14days[i] = 0;
                 for(var j = Math.max(0,i-13); j <= i; j++) {
                     cases14days[i] += casesToday[j];
+                    tests14days[i] += testsToday[j];
                 }
                 timeToDouble[i] = Math.round(49*totalcases[i]/cases7days[i])/10;
                 timeToDoubleDeaths[i] = Math.round(49*totaldeaths[i]/deaths7days[i])/10;
+                timeToDoubleTests[i] = Math.round(49*totaltests[i]/tests7days[i])/10;
             }
-            var maxCases = 0, maxCases7 = 0, maxDeaths = 0, maxDeaths7 = 0, maxCasesDate = "", maxDeathsDate = "";
+            var maxCases = 0, maxCases7 = 0, maxDeaths = 0, maxDeaths7 = 0, 
+                maxTests = 0, maxTests7 = 0,
+                maxCasesDate = "", maxDeathsDate = "", maxTestsDate = "";
             for(var i = 0; i < labels.length; i++) {
                 if(cases7days[i] > maxCases7) {
                     maxCases7 = cases7days[i];
@@ -73,6 +98,13 @@
                 if(casesToday[i] > maxCases) {
                     maxCases = casesToday[i];
                     maxCasesDate = labels[i];
+                }
+                if(testsToday[i] > maxTests) {
+                    maxTests = testsToday[i];
+                    maxTestsDate = labels[i];
+                }
+                if(tests7days[i] > maxTests7) {
+                    maxTests7 = tests7days[i];
                 }
                 if(deaths7days[i] > maxDeaths7) {
                     maxDeaths7 = deaths7days[i];
@@ -85,9 +117,11 @@
 
             sqlData.casesPctMax = new Array();
             sqlData.deathsPctMax = new Array();
+            sqlData.testsPctMax = new Array();
             for(var i = 0; i < labels.length; i++) {
                 casesPctMax[i] = Math.round(1000*cases7days[i]/maxCases7)/10;
                 deathsPctMax[i] = Math.round(1000*deaths7days[i]/maxDeaths7)/10;
+                testsPctMax[i] = Math.round(1000*tests7days[i]/maxTests7)/10;
             }
         }
 
@@ -366,9 +400,11 @@
                 }
                 var b = Math.pow(10,Math.floor(Math.log(maxTraj)/Math.log(10)));
                 maxTraj = Math.ceil(maxTraj/b)*b;
-                var maxTrajX = casesData[sqlData.length - 1];
+                var maxTrajX = casesData[casesData.length - 1].x;
                 b = Math.pow(10,Math.floor(Math.log(maxTrajX)/Math.log(10)));
-                maxTrajX = Math.ceil(maxTrajX/b)*b;                
+                maxTrajX = Math.ceil(maxTrajX/b)*b;  
+                sqlData.trajCases = casesData;
+                sqlData.trajDeaths = deathsData;              
 
                 var deathsCompCtx = document.getElementById("deathsCompChart");
                 var deathsCompChart = new Chart(deathsCompCtx, {
@@ -428,8 +464,9 @@
                     }
                 });
 
+
                 var trajCtx = document.getElementById("trajectoryChart");
-                var trajChart = Chart.Scatter(trajCtx, {
+                window.trajChart = Chart.Scatter(trajCtx, {
                     // The data for our dataset
                     data: {
                         datasets: [{
@@ -437,7 +474,7 @@
                             backgroundColor: chartColors.purple,
                             borderColor: chartColors.ltpurple,
                             fill: false,
-                            data: casesData,
+                            // data: [casesData[0],casesData[1],casesData[2]],
                             snapGaps: true,
                             showLine: true,
                             lineTension: 0,
@@ -446,7 +483,7 @@
                             backgroundColor: chartColors.red,
                             borderColor: chartColors.ltred,
                             fill: false,
-                            data: deathsData,
+                            // data: [deathsData[0],deathsData[1],deathsData[2]],
                             snapGaps: true,
                             showLine: true,
                             lineTension: 0,
@@ -496,13 +533,6 @@
                                 }
                             ]
                         },
-                        plugins: {
-                            deferred: {
-                                xOffset: 150,
-                                yOffset: '50%',
-                                delay: 500
-                            }
-                        },
                         tooltips: {
                             callbacks: {
                                 label: function(tooltipItem, data) {
@@ -538,6 +568,15 @@
                             borderColor: chartColors.ltorange,
                             fill: false,
                             data: sqlData.timeToDoubleDeaths,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        },{
+                            label: "Time to Double Tests",
+                            backgroundColor: chartColors.green,
+                            borderColor: chartColors.ltgreen,
+                            fill: false,
+                            data: sqlData.timeToDoubleTests,
                             snapGaps: true,
                             showLine: true,
                             lineTension: 0,
@@ -582,7 +621,7 @@
                     data: {
                         labels: sqlData.labels,
                         datasets: [{
-                            label: "New Cases (7 Day Average) As a Percentage of Max Attained (" + maxCases + " cases/day on " + maxCasesDate + ")",
+                            label: "New Cases (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxCases) + " cases/day on " + maxCasesDate + ")",
                             backgroundColor: chartColors.blue,
                             borderColor: chartColors.ltblue,
                             fill: false,
@@ -591,11 +630,20 @@
                             showLine: true,
                             lineTension: 0,
                         },{
-                            label: "Deaths (7 Day Average) As a Percentage of Max Attained (" + maxDeaths + " deaths/day on " + maxDeathsDate + ")",
+                            label: "Deaths (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxDeaths) + " deaths/day on " + maxDeathsDate + ")",
                             backgroundColor: chartColors.yellow,
                             borderColor: chartColors.ltyellow,
                             fill: false,
                             data: sqlData.deathsPctMax,
+                            snapGaps: true,
+                            showLine: true,
+                            lineTension: 0,
+                        },{
+                            label: "Tests (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxTests) + " tests/day on " + maxTestsDate + ")",
+                            backgroundColor: chartColors.purple,
+                            borderColor: chartColors.ltpurple,
+                            fill: false,
+                            data: sqlData.testsPctMax,
                             snapGaps: true,
                             showLine: true,
                             lineTension: 0,
@@ -626,13 +674,40 @@
                         }
                     }
                 });
+
+                document.getElementById('animateTrajectory').addEventListener('click',function() {
+                    document.getElementById('animateTrajectory').disabled = true;
+                    trajChartLoopCounter = 0;
+                    trajChart.data.datasets.forEach((dataset) => {
+                        while(typeof(dataset.data.pop()) != "undefined");
+                    });
+                    setTimeout(trajChartLoop,300);
+                });
+                setTimeout(trajChartLoop,1000);
             }
+
+            var trajChartLoopCounter = 0;
+            function trajChartLoop() {
+                trajChart.data.datasets[0].data.push(sqlData.trajCases[trajChartLoopCounter]);
+                trajChart.data.datasets[1].data.push(sqlData.trajDeaths[trajChartLoopCounter]);
+                trajChart.update();
+                if(++trajChartLoopCounter < sqlData.trajCases.length) {
+                    setTimeout(trajChartLoop, Math.round(5000/sqlData.trajCases.length));
+                }
+                else {
+                    document.getElementById('animateTrajectory').disabled = false;
+                }
+            }
+
         </script>
     </head>
     <body>
         <h1 id="theHeader">This is broken</h1>
         <div style="width:90%">
-            <h2><a href="#Trajectory" id="Trajectory">Trajectory</a></h2>
+            <h2>
+                <a href="#Trajectory" id="Trajectory">Trajectory</a>
+                <button id="animateTrajectory" disabled="true">Animate Trajectory</button>
+            </h2>
             <canvas id="trajectoryChart"></canvas>
         </div>
         <div style="width:90%">
@@ -646,6 +721,10 @@
         <div style="width:90%">
             <h2><a href="#Vs" id="Vs">Deaths Today vs. Deaths 1 Week Ago</a></h2>
             <canvas id="deathsCompChart"></canvas>
+        </div>
+        <div style="width:90%">
+            <h2><a href="#Tests" id="Tests">Tests Performed</a></h2>
+            <canvas id="testsChart"></canvas>
         </div>
         <div style="width:90%">
             <h2><a href="#Double" id="Double">Time to Double</a></h2>
