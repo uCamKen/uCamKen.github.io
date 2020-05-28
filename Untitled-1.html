@@ -30,7 +30,7 @@
             ltorange: 'rgba(255, 159, 64,0.3)',
             ltyellow: 'rgb(255, 205, 86)',
             ltgreen: 'rgb(75, 192, 192)',
-            ltblue: 'rgb(54, 162, 235)',
+            ltblue: 'rgba(54, 162, 235, 0.3)',
             ltpurple: 'rgba(153, 102, 255,0.6)',
             ltgrey: 'rgb(201, 203, 207)'
         };
@@ -80,8 +80,8 @@
                     tests7days[i] += testsToday[j];
                 }
                 deathsCompAvg[i] = Math.round(10 * deathsCompAvg[i] / (Math.min(7,i+1))) / 10;
-                posPct[i] = Math.round(totaltests[i]/totalcases[i] * 10) / 10;
-                posPct7days[i] = Math.round(cases7days[i] / tests7days[i] * 10) / 10;
+                posPct[i] = Math.round(casesToday[i]/testsToday[i] * 1000) / 10;
+                posPct7days[i] = Math.round(cases7days[i] / tests7days[i] * 1000) / 10;
                 cases14days[i] = 0;
                 tests14days[i] = 0;
                 for(var j = Math.max(0,i-13); j <= i; j++) {
@@ -596,6 +596,66 @@
                     }
                 });
 
+
+                var posPctCtx = document.getElementById("posPctChart");
+                window.posPctChart = Chart.Line(posPctCtx, {
+                    data: {
+                        labels: sqlData.labels,
+                        datasets: [{
+                            label: 'Percent Positive 7 Day Average',
+                            backgroundColor: chartColors.red,
+                            borderColor: chartColors.ltred,
+                            fill: false,
+                            yAxisID: 'leftAxis',
+                            data: sqlData.posPct7days
+                        },{
+                            label: 'Percent Positive Today',
+                            backgroundColor: chartColors.blue,
+                            borderColor: chartColors.ltblue,
+                            fill: true,
+                            type: "bar",
+                            yAxisID: 'leftAxis',
+                            data: sqlData.posPct
+                        }
+                    ]
+
+                    },
+                    // Configuration options go here
+                    options: {
+                        scales: {
+                            yAxes : [
+                                {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'left',
+                                    id: 'leftAxis',
+                                    ticks: {
+                                        userCallback: function(tick) {
+                                            return Number(tick).toLocaleString() + "%";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var set = data.datasets[tooltipItem.datasetIndex];
+                                    return [set.label + ": " + Number(set.data[tooltipItem.index]).toLocaleString() + "%"];
+                                }
+                            }
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            },
+                        }
+                    }
+                });
+
+
                 var trajCtx = document.getElementById("trajectoryChart");
                 window.trajChart = Chart.Scatter(trajCtx, {
                     // The data for our dataset
@@ -856,6 +916,10 @@
         <div style="width:90%">
             <h2><a href="#Tests" id="Tests">Tests Performed</a></h2>
             <canvas id="testsChart"></canvas>
+        </div>
+        <div style="width:90%">
+            <h2><a href="#PosPct" id="PosPct">Tests Percent Positive Today and 7 Day Average</a></h2>
+            <canvas id="posPctChart"></canvas>
         </div>
         <div style="width:90%">
             <h2><a href="#Double" id="Double">Time to Double</a></h2>
