@@ -59,6 +59,8 @@
             sqlData.tests7days = new Array();
             sqlData.tests14days = new Array();
             sqlData.timeToDoubleTests = new Array();
+            sqlData.posPct = new Array();
+            sqlData.posPct7days = new Array();
             for(var i = 0; i < labels.length; i++) {
                 totalcases[i] = isNaN(totalcases[i])?0:totalcases[i];
                 totaltests[i] = isNaN(totaltests[i])?0:totaltests[i];
@@ -78,6 +80,8 @@
                     tests7days[i] += testsToday[j];
                 }
                 deathsCompAvg[i] = Math.round(10 * deathsCompAvg[i] / (Math.min(7,i+1))) / 10;
+                posPct[i] = Math.round(totaltests[i]/totalcases[i] * 10) / 10;
+                posPct7days[i] = Math.round(cases7days[i] / tests7days[i] * 10) / 10;
                 cases14days[i] = 0;
                 tests14days[i] = 0;
                 for(var j = Math.max(0,i-13); j <= i; j++) {
@@ -464,6 +468,133 @@
                     }
                 });
 
+                var testsCtx = document.getElementById("testsChart");
+                window.testsChart = Chart.Line(testsCtx, {
+                    data: {
+                        labels: sqlData.labels,
+                        datasets: [{
+                            label: 'Total Tests',
+                            backgroundColor: chartColors.orange,
+                            borderColor: chartColors.ltorange,
+                            fill: false,
+                            yAxisID: 'leftAxis',
+                            data: sqlData.totaltests
+                        }, {
+                            label: 'New Tests Past 14 Days',
+                            backgroundColor: chartColors.purple,
+                            borderColor: chartColors.ltpurple,
+                            fill: true,
+                            yAxisID: 'leftAxis',
+                            data: sqlData.tests14days
+                        }, {
+                            type: 'bar',
+                            label: 'New Tests',
+                            backgroundColor: chartColors.green,
+                            borderColor: chartColors.ltgreen,
+                            fill: true,
+                            yAxisID: 'rightAxis',
+                            data: sqlData.testsToday
+                        }
+                    ]
+
+                    },
+                    // Configuration options go here
+                    options: {
+                        scales: {
+                            yAxes : [
+                                {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'left',
+                                    id: 'leftAxis',
+                                    scaleLabel:
+                                    {
+                                        display: true,
+                                        labelString: 'Total Tests / Tests Past 14 Days'
+                                    },
+                                    ticks: {
+                                        userCallback: function(tick) {
+                                            return Number(tick).toLocaleString();
+                                        }
+                                    }
+                                },
+                                {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'right',
+                                    id: 'rightAxis',
+                                    scaleLabel:
+                                    {
+                                        display: true,
+                                        labelString: 'Tests Today'
+                                    },
+                                    ticks: {
+                                        userCallback: function(tick) {
+                                            return Number(tick).toLocaleString();
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var set = data.datasets[tooltipItem.datasetIndex];
+                                    return [set.label + ": " + Number(set.data[tooltipItem.index]).toLocaleString()];
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: [
+                                {
+                                    drawTime: "afterDatasetsDraw",
+                                    id: "hline",
+                                    type: "line",
+                                    mode: "horizontal",
+                                    scaleID: "leftAxis",
+                                    value: 444110,
+                                    borderColor: "grey",
+                                    borderWidth: 1,
+                                    borderDash: [2,2],
+                                    label: {
+                                        content: "<< 5% of Population (444,100)",
+                                        enabled: true,
+                                        backgroundColor: 'grey',
+                                        position: "left",
+                                        fontStyle: "normal",
+                                        xAdjust: 10
+                                    },
+                                },
+                                {
+                                    drawTime: "afterDatasetsDraw",
+                                    id: "hline2",
+                                    type: "line",
+                                    mode: "horizontal",
+                                    scaleID: "rightAxis",
+                                    value: 20005,
+                                    borderColor: "grey",
+                                    borderWidth: 1,
+                                    borderDash: [2,2],
+                                    label: {
+                                        content: "0.25% of Population (20,005 - 1 in 400) >>",
+                                        enabled: true,
+                                        backgroundColor: 'grey',
+                                        position: "left",
+                                        fontStyle: "normal",
+                                        xAdjust: 10
+                                    },
+                                }
+                            ]
+                        },
+                        plugins: {
+                            deferred: {
+                                xOffset: 150,
+                                yOffset: '50%',
+                                delay: 500
+                            },
+                        }
+                    }
+                });
 
                 var trajCtx = document.getElementById("trajectoryChart");
                 window.trajChart = Chart.Scatter(trajCtx, {
