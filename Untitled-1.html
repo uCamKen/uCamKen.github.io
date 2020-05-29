@@ -1048,6 +1048,84 @@
             });
 
 
+            var hospPctCtx = document.getElementById("hospPctChart");
+            var hospPctChart = Chart.Line(hospPctCtx, {
+                // The data for our dataset
+                data: {
+                    labels: hospData.dates,
+                    datasets: [{
+                        label: 'Total Hospitalizations Percent of Max',
+                        backgroundColor: chartColors.yellow,
+                        borderColor: chartColors.ltyellow,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        data: hospData.totalPct
+                    }, {
+                        label: 'North Jersey Hospitalizations Percent of Max',
+                        backgroundColor: chartColors.green,
+                        borderColor: chartColors.ltgreen,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.northPct
+                    }, {
+                        label: 'Central Jersey Hospitalizations Percent of Max',
+                        backgroundColor: chartColors.blue,
+                        borderColor: chartColors.blue,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.centralPct
+                    }, {
+                        label: 'South Jersey Hospitalizations Percent of Max',
+                        backgroundColor: chartColors.red,
+                        borderColor: chartColors.red,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.southPct
+                    }
+                ]
+
+                },
+                // Configuration options go here
+                options: {
+                    scales: {
+                        yAxes : [
+                            {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                id: 'leftAxis',
+                                ticks: {
+                                    userCallback: function(tick) {
+                                        return Math.round(tick*10)/10 + "%";
+                                    }
+                                }
+                            },
+                        ]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var set = data.datasets[tooltipItem.datasetIndex];
+                                return [set.label + ": " + Math.round(set.data[tooltipItem.index]*10)/10 + "%"];
+                            }
+                        }
+                    },
+                    plugins: {
+                        deferred: {
+                            xOffset: 150,
+                            yOffset: '50%',
+                            delay: 500
+                        }
+                    },
+                    
+                }
+            });
+
+
+
             document.getElementById('animateTrajectory').addEventListener('click',function() {
                 document.getElementById('animateTrajectory').disabled = true;
                 trajChartLoopCounter = 0;
