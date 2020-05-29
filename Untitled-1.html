@@ -18,6 +18,16 @@
         }
 		</style>
         <script>
+            function parseYYYYMMDD(str) {
+                var parts = str.split('-');
+                return new Date(parts[0],parts[1]-1,parts[2]);
+            }
+
+            function parseMDYY(str) {
+                var parts = str.split('/');
+                return new Date("20"+parts[2],parts[0]-1,parts[1]);
+            }
+
             var loaded = new Object();
             loaded.window = false;
 
@@ -39,7 +49,8 @@
         };
 
         var sqlData = null;
-        var hospData = null;
+        var hospArr = null;
+        var hospData = new Object();
 
         let hospRequest = new XMLHttpRequest();
         hospRequest.open('GET','nj_hospitalizations.json');
@@ -47,7 +58,7 @@
         loaded.hospJSON = false;
         hospRequest.onload = function() {
             var x = hospRequest.response;
-            hospData = JSON.parse(x);
+            hospArr = JSON.parse(x);
             loaded.hospJSON = true;
             doLoaded();
         }
@@ -75,11 +86,12 @@
         }
 
         function doLoaded() {
-            Object.keys(loaded).forEach(element => {
-                if(loaded[element] == false) {
+            var keys = Object.keys(loaded);
+            for(var i = 0; i < keys.length; i++) {
+                if(loaded[keys[i]] == false) {
                     return;
                 }
-            });
+            }
 
             document.getElementById("theHeader").innerText = "Processing Data";
 
@@ -169,13 +181,60 @@
                 }
             }
 
+            hospData.dates = new Array();
+            hospData.central = new Array();
+            hospData.south = new Array();
+            hospData.north = new Array();
+            hospData.total = new Array();
+            hospData.centralMax = 0;
+            hospData.southMax = 0;
+            hospData.northMax = 0;
+            hospData.totalMax = 0;
+            hospData.maxDate = "";
+            with(hospData) {
+                for(var i = 0; i < hospArr.length; i++) {
+                    dates[i] = hospArr[i].date;
+                    central[i] = hospArr[i].central;
+                    south[i] = hospArr[i].south;
+                    north[i] = hospArr[i].north;
+                    total[i] = hospArr[i].central + hospArr[i].south + hospArr[i].north;
+                    centralMax = Math.max(centralMax, central[i]);                
+                    southMax = Math.max(southMax, south[i]);                
+                    northMax = Math.max(northMax, north[i]);                
+                    if(total[i] > totalMax) {
+                        totalMax = total[i];
+                        maxDate = dates[i];
+                    }
+                }
+                hospData.centralPct = new Array();
+                hospData.southPct = new Array();
+                hospData.northPct = new Array();
+                hospData.totalPct = new Array();
+                for(var i = 0; i < hospArr.length; i++) {
+                    centralPct[i] = Math.max(central[i]/centralMax*1000)/10;
+                    northPct[i] = Math.max(north[i]/northMax*1000)/10;
+                    southPct[i] = Math.max(south[i]/southMax*1000)/10;
+                    totalPct[i] = Math.max(total[i]/totalMax*1000)/10;
+                }
+                hospData.totalPctShifted = new Array();
+
+                for(var i = 0, j = 0; i < sqlData.labels.length && j < hospData.totalPct.length; i++) {
+                    var a = parseYYYYMMDD(sqlData.labels[i]);
+                    var b = parseMDYY(hospData.dates[j]);
+
+                    if(a.getTime() == b.getTime()) {
+                        hospData.totalPctShifted[i] = hospData.totalPct[j++];
+                    }
+                    else {
+                        hospData.totalPctShifted[i] = NaN; 
+                    }
+                }
+            }
+
             document.getElementById("theHeader").innerText = "COVID-19 Charts";
 
             var casesCtx = document.getElementById("casesChart");
-            var casesChart = new Chart(casesCtx, {
-                // The type of chart we want to create
-                type: 'line',
-
+            var casesChart = Chart.Line(casesCtx, {
                 // The data for our dataset
                 data: {
                     labels: sqlData.labels,
@@ -306,10 +365,7 @@
 
 
             var deathsCtx = document.getElementById("deathsChart");
-            var deathsChart = new Chart(deathsCtx, {
-                // The type of chart we want to create
-                type: 'line',
-
+            var deathsChart = Chart.Line(deathsCtx, {
                 // The data for our dataset
                 data: {
                     labels: sqlData.labels,
@@ -845,13 +901,14 @@
                 }
             });
 
+            var x = hospData.totalMax.toLocaleString();
             var pctCtx = document.getElementById("pctChart");
             var pctChart = Chart.Line(pctCtx, {
                 // The data for our dataset
                 data: {
                     labels: sqlData.labels,
                     datasets: [{
-                        label: "New Cases (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxCases) + " cases/day on " + maxCasesDate + ")",
+                        label: "New Cases (7 Day Average) As a Percentage of Max Attained (" + maxCases.toLocaleString() + " cases/day on " + maxCasesDate + ")",
                         backgroundColor: chartColors.blue,
                         borderColor: chartColors.ltblue,
                         fill: false,
@@ -860,7 +917,7 @@
                         showLine: true,
                         lineTension: 0,
                     },{
-                        label: "Deaths (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxDeaths) + " deaths/day on " + maxDeathsDate + ")",
+                        label: "Deaths (7 Day Average) As a Percentage of Max Attained (" + maxDeaths.toLocaleString() + " deaths/day on " + maxDeathsDate + ")",
                         backgroundColor: chartColors.yellow,
                         borderColor: chartColors.ltyellow,
                         fill: false,
@@ -869,11 +926,20 @@
                         showLine: true,
                         lineTension: 0,
                     },{
-                        label: "Tests (7 Day Average) As a Percentage of Max Attained (" + Math.toLocaleString(maxTests) + " tests/day on " + maxTestsDate + ")",
+                        label: "Tests (7 Day Average) As a Percentage of Max Attained (" + maxTests.toLocaleString() + " tests/day on " + maxTestsDate + ")",
                         backgroundColor: chartColors.purple,
                         borderColor: chartColors.ltpurple,
                         fill: false,
                         data: sqlData.testsPctMax,
+                        snapGaps: true,
+                        showLine: true,
+                        lineTension: 0,
+                    },{
+                        label: "Hospitalizations As a Percentage of Max Attained (" + hospData.totalMax.toLocaleString() + " hospitalized on " + hospData.maxData + ")",
+                        backgroundColor: chartColors.red,
+                        borderColor: chartColors.ltred,
+                        fill: false,
+                        data: hospData.totalPctShifted,
                         snapGaps: true,
                         showLine: true,
                         lineTension: 0,
