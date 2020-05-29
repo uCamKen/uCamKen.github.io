@@ -971,6 +971,83 @@
                 }
             });
 
+            var hospCtx = document.getElementById("hospChart");
+            var hospChart = Chart.Line(hospCtx, {
+                // The data for our dataset
+                data: {
+                    labels: hospData.dates,
+                    datasets: [{
+                        label: 'Total Hospitalizations',
+                        backgroundColor: chartColors.yellow,
+                        borderColor: chartColors.ltyellow,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        data: hospData.total
+                    }, {
+                        label: 'North Jersey Hospitalizations',
+                        backgroundColor: chartColors.green,
+                        borderColor: chartColors.ltgreen,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.north
+                    }, {
+                        label: 'Central Jersey Hospitalizations',
+                        backgroundColor: chartColors.blue,
+                        borderColor: chartColors.blue,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.central
+                    }, {
+                        label: 'South Jersey Hospitalizations',
+                        backgroundColor: chartColors.red,
+                        borderColor: chartColors.red,
+                        fill: false,
+                        yAxisID: 'leftAxis',
+                        borderDash: [2,2],
+                        data: hospData.south
+                    }
+                ]
+
+                },
+                // Configuration options go here
+                options: {
+                    scales: {
+                        yAxes : [
+                            {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                id: 'leftAxis',
+                                ticks: {
+                                    userCallback: function(tick) {
+                                        return Number(tick).toLocaleString();
+                                    }
+                                }
+                            },
+                        ]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var set = data.datasets[tooltipItem.datasetIndex];
+                                return [set.label + ": " + Number(set.data[tooltipItem.index]).toLocaleString()];
+                            }
+                        }
+                    },
+                    plugins: {
+                        deferred: {
+                            xOffset: 150,
+                            yOffset: '50%',
+                            delay: 500
+                        }
+                    },
+                    
+                }
+            });
+
+
             document.getElementById('animateTrajectory').addEventListener('click',function() {
                 document.getElementById('animateTrajectory').disabled = true;
                 trajChartLoopCounter = 0;
@@ -1038,6 +1115,16 @@
             <h2><a href="#Pct" id="Pct">Daily New Cases and Deaths as Percentage of Max Value Attained</a></h2>
             <h3></h3>
             <canvas id="pctChart"></canvas>
+        </div>
+        <div style="width:90%">
+            <h2><a href="#Hosp" id="Hosp">NJ COVID Hospitalizations by Region</a></h2>
+            <h3></h3>
+            <canvas id="hospChart"></canvas>
+        </div>
+        <div style="width:90%">
+            <h2><a href="#HospPct" id="HospPct">NJ COVID Hospitalizations as Percentage of Maximum</a></h2>
+            <h3>Percentage of maximum value reached, NOT maximum hospital capacity</h3>
+            <canvas id="hospPctChart"></canvas>
         </div>
     </body>
 </html>
